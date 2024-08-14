@@ -1,0 +1,29 @@
+# Enable URL rewriting
+RewriteEngine on
+
+# If a directory or a file exists, use it directly
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Otherwise forward it to index.php
+RewriteRule . index.php
+
+# Block access to .htaccess and .git
+<Files .htaccess>
+    Order allow,deny
+    Deny from all
+</Files>
+
+<FilesMatch "^\.git">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Set the environment to development (or production)
+SetEnv YII_ENV dev
+SetEnv YII_DEBUG 1
+
+# Use PHP-FPM via socket
+<FilesMatch \.php$>
+    SetHandler "proxy:unix:/run/php/php8.3-fpm.sock|fcgi://localhost"
+</FilesMatch>
