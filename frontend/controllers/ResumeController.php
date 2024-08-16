@@ -4,21 +4,60 @@ namespace frontend\controllers;
 
 use common\models\ResumeData;
 use Yii;
+use yii\data\ActiveDataProvider;
 
 class ResumeController extends \yii\web\Controller
 {
     public function actionIndex()
     {
-        return $this->render('index');
+        $model = new ResumeData();
+        $getState = $this->getState();
+
+        return $this->render('index', [
+            'model' => $model,
+            'getState' => $getState,
+            'skills' => $this->getSkills(),
+        ]);
     }
 
     public function actionCreate()
     {
         $model = new ResumeData();
         $getState = $this->getState();
+
+        if (Yii::$app->request->isPost) {
+
+            $contact_info = ['email' => $_POST['ResumeData']['email'], 'mobile_number' => $_POST['ResumeData']['mobile_number']];
+
+            $stateName = $this->getState()[$_POST['ResumeData']['state']];
+
+            $location_info = ['state' => $stateName, 'city' => $_POST['ResumeData']['city'], 'pincode' => $_POST['ResumeData']['pincode']];
+
+            $model = new ResumeData();
+            $model->user_id = Yii::$app->user->identity->id;
+            $model->first_name = $_POST['ResumeData']['first_name'];
+            $model->middle_name = $_POST['ResumeData']['middle_name'];
+            $model->last_name = $_POST['ResumeData']['last_name'];
+            $model->contact_info = json_encode($contact_info);
+            $model->location_info = json_encode($location_info);
+            $model->social_media_info = $_POST['ResumeData']['linkdin'];
+            $model->education_info = json_encode($_POST['ResumeData']['education_info']);
+            $model->skills_info = json_encode($_POST['ResumeData']['skills_info']);
+            $model->experience_info = json_encode($_POST['ResumeData']['experience_info']);
+
+            if ($model->save(false)) {
+                Yii::$app->session->setFlash('success', 'Success!');
+                return $this->redirect(['resume/index']);
+            } else {
+                Yii::$app->session->setFlash('error', 'Failed to create!');
+                return $this->redirect(['resume/index']);
+            }
+        }
+
         return $this->render('index', [
             'model' => $model,
-            'getState' => $getState
+            'getState' => $getState,
+            'skills' => $this->getSkills(),
         ]);
     }
 
@@ -43,6 +82,30 @@ class ResumeController extends \yii\web\Controller
         }
 
         return $out;
+    }
+
+    public function actionManageResume()
+    {
+        $dataProvider = new ActiveDataProvider([
+            'query' => ResumeData::find()->where(['user_id' => Yii::$app->user->identity->id]),
+            'pagination' => [
+                'pageSize' => 20,
+            ],
+        ]);
+        return $this->render('manage_resume', [
+            'dataProvider' => $dataProvider
+        ]);
+    }
+
+    public function actionDownload()
+    {
+        $data = [];
+        $html = $this->renderPartial('resume-pdf',[
+            'data' => $data,
+        ]);
+        $mpdf = new \Mpdf\Mpdf();
+        $mpdf->WriteHTML($html);
+        $mpdf->Output('Resume.pdf', \Mpdf\Output\Destination::INLINE);
     }
 
     private function getState()
@@ -795,5 +858,23 @@ class ResumeController extends \yii\web\Controller
         ];
 
         return isset($cityByState[$state_id]) ? $cityByState[$state_id] : [];
+    }
+
+    private function getSkills()
+    {
+        return [
+            'php' => 'php',
+            'react' => 'react',
+            'css' => 'css',
+            'javascript' => 'javascript',
+            'laravel' => 'laravel',
+            'yii2' => 'yii2',
+            'html' => 'html',
+            'git' => 'git',
+            'mysql' => 'mysql',
+            'nodejs' => 'nodejs',
+            'bootstrap' => 'bootstrap',
+            'docker' => 'docker'
+        ];
     }
 }

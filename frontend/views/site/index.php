@@ -15,7 +15,7 @@ $this->title = 'Resume Builder';
         </div>
     </div>
 
-    <!-- <div class="body-content">
+    <div class="body-content">
 
         <div class="row">
             <div class="col-lg-4">
@@ -23,14 +23,14 @@ $this->title = 'Resume Builder';
 
                 <p>Get started by creating a new resume. Choose from various templates, add your personal information, and create a professional-looking resume in minutes.</p>
 
-                <p><a class="btn btn-outline-secondary" href="/resume/create">Create Now &raquo;</a></p>
+                <p><a class="btn btn-outline-secondary" href=<?= Yii::$app->user->isGuest ? Url::to("login") : Url::to("create") ?> >Create Now &raquo;</a></p>
             </div>
             <div class="col-lg-4">
                 <h2>Manage Resumes</h2>
 
                 <p>View and edit your existing resumes. Keep them up-to-date with your latest achievements and skills, ensuring you're always ready to impress.</p>
 
-                <p><a class="btn btn-outline-secondary" href="/resume/manage">Manage Resumes &raquo;</a></p>
+                <p><a class="btn btn-outline-secondary" href=<?= Yii::$app->user->isGuest ? Url::to("login") : Url::to("manage-resume") ?>>Manage Resumes &raquo;</a></p>
             </div>
             <div class="col-lg-4">
                 <h2>Tips & Resources</h2>
@@ -41,5 +41,5 @@ $this->title = 'Resume Builder';
             </div>
         </div>
 
-    </div> -->
+    </div>
 </div>

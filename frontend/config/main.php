@@ -44,6 +44,7 @@ return [
                 'login' => '/site/login',
                 'signup' => '/site/signup',
                 'create' => '/resume/create',
+                'manage-resume' => '/resume/manage-resume'
             ],
         ],
     ],

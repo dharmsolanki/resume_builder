@@ -26,6 +26,8 @@ class ResumeData extends \yii\db\ActiveRecord
     public $mobile_number;
     public $state;
     public $city;
+    public $pincode;
+    public $linkdin;
     /**
      * {@inheritdoc}
      */
@@ -40,7 +42,8 @@ class ResumeData extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['first_name', 'last_name', 'contact_info', 'location_info', 'social_media_info', 'education_info', 'skills_info', 'experience_info', 'created_at', 'updated_at'], 'required'],
+            [['user_id', 'first_name', 'last_name', 'contact_info', 'location_info', 'social_media_info', 'education_info', 'skills_info', 'experience_info', 'created_at', 'updated_at', 'state', 'city', 'email', 'mobile_number', 'pincode', 'college', 'percentage'], 'required'],
+            ['Email', 'email'],
             [['contact_info', 'location_info', 'social_media_info', 'education_info', 'skills_info', 'experience_info', 'created_at', 'updated_at'], 'safe'],
             [['first_name', 'middle_name', 'last_name'], 'string', 'max' => 255],
         ];
