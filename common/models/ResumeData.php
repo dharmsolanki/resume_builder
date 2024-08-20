@@ -28,6 +28,7 @@ class ResumeData extends \yii\db\ActiveRecord
     public $city;
     public $pincode;
     public $linkdin;
+    public $file;
     /**
      * {@inheritdoc}
      */
@@ -46,6 +47,8 @@ class ResumeData extends \yii\db\ActiveRecord
             ['Email', 'email'],
             [['contact_info', 'location_info', 'social_media_info', 'education_info', 'skills_info', 'experience_info', 'created_at', 'updated_at'], 'safe'],
             [['first_name', 'middle_name', 'last_name'], 'string', 'max' => 255],
+            [['file'], 'file', 'skipOnEmpty' => false, 'extensions' => 'png, jpg'],
+            [['file'], 'string', 'max' => 255],
         ];
     }
 
@@ -65,6 +68,7 @@ class ResumeData extends \yii\db\ActiveRecord
             'education_info' => 'Education Info',
             'skills_info' => 'Skills Info',
             'experience_info' => 'Experience Info',
+            'file' => 'Uploaded File',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
