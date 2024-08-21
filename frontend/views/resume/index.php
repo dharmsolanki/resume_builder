@@ -7,17 +7,21 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use unclead\multipleinput\MultipleInput;
 use unclead\multipleinput\MultipleInputColumn;
+use yidas\yii\fontawesome\FontawesomeAsset;
+
+FontawesomeAsset::register($this);
 
 $form = ActiveForm::begin([
     'id' => 'resume-form',
-    'options' => ['class' => 'form-horizontal'],
-    'action' => ['resume/create']
+    'options' => ['class' => 'form-horizontal', 'enctype' => 'multipart/form-data'],
+    // Set the action dynamically based on whether it's an update or create
+    'action' => $model->isNewRecord ? ['resume/create'] : ['resume/update', 'id' => $model->id],
 ]) ?>
 
 <div class="container mt-4">
     <div class="row">
         <div class="col-md-12">
-            <h2 class="text-center mb-4">Create Your Resume</h2>
+            <h2 class="text-center mb-4"><?= $model->isNewRecord ? 'Create Your Resume' : 'Update Your Resume' ?></h2>
         </div>
 
         <!-- Personal Information -->
@@ -53,7 +57,7 @@ $form = ActiveForm::begin([
                 'language' => 'en',
                 'options' => ['placeholder' => 'Select a state ...', 'id' => 'state'],
                 'pluginOptions' => [
-                    'allowClear' => true
+                    // 'allowClear' => true
                 ],
             ]); ?>
         </div>
@@ -104,11 +108,11 @@ $form = ActiveForm::begin([
                 'max' => 4,
                 'addButtonOptions' => [
                     'class' => 'btn btn-success btn-sm',
-                    'label' => '<i class="fas fa-plus"></i> Add Education'
+                    'label' => '<i class="fas fa-plus"></i>',
                 ],
                 'removeButtonOptions' => [
                     'class' => 'btn btn-danger btn-sm',
-                    'label' => '<i class="fas fa-trash"></i> Remove'
+                    'label' => '<i class="fas fa-trash"></i>'
                 ],
                 'columns' => [
                     [
@@ -145,11 +149,11 @@ $form = ActiveForm::begin([
                 'max' => 4,
                 'addButtonOptions' => [
                     'class' => 'btn btn-success btn-sm',
-                    'label' => '<i class="fas fa-plus"></i> Add Experience'
+                    'label' => '<i class="fas fa-plus"></i>'
                 ],
                 'removeButtonOptions' => [
                     'class' => 'btn btn-danger btn-sm',
-                    'label' => '<i class="fas fa-trash"></i> Remove'
+                    'label' => '<i class="fas fa-trash"></i>'
                 ],
                 'columns' => [
                     [
@@ -161,7 +165,9 @@ $form = ActiveForm::begin([
                         'name' => 'year_of_experience',
                         'title' => 'Years of Experience',
                         'options' => [
-                            'type' => 'number'
+                            'type' => 'number',
+                            'step' => '0.01',  // Allows decimal inputs, e.g., 1.25 years
+                            'min' => '0',      // Optional: Set the minimum value to 0 to prevent negative inputs
                         ]
                     ],
                     [
@@ -175,7 +181,7 @@ $form = ActiveForm::begin([
 
         <!-- Submit Button -->
         <div class="col-md-12 mt-4 text-center">
-            <?= Html::submitButton('Submit', ['class' => 'btn btn-primary btn-lg']) ?>
+            <?= Html::submitButton($model->isNewRecord ? 'Submit' : 'Update', ['class' => 'btn btn-primary btn-lg']) ?>
         </div>
     </div>
 </div>

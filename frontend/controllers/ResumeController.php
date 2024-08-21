@@ -5,6 +5,7 @@ namespace frontend\controllers;
 use common\models\ResumeData;
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
 
 class ResumeController extends \yii\web\Controller
@@ -26,52 +27,41 @@ class ResumeController extends \yii\web\Controller
         $model = new ResumeData();
         $getState = $this->getState();
 
-        if (Yii::$app->request->isPost) {
-            $contact_info = [
-                'email' => $_POST['ResumeData']['email'],
-                'mobile_number' => $_POST['ResumeData']['mobile_number']
-            ];
-
-            $stateName = $this->getState()[$_POST['ResumeData']['state']];
-
-            $location_info = [
-                'state' => $stateName,
-                'city' => isset($_POST['ResumeData']['city']) ? $_POST['ResumeData']['city'] : null,
-                'pincode' => isset($_POST['ResumeData']['pincode']) ? $_POST['ResumeData']['pincode'] : null,
-            ];
-
-            if (is_null($location_info['city'])) {
-                Yii::$app->session->setFlash('error', 'City is required.');
-                return $this->redirect(['resume/index']);
-            }
+        if (Yii::$app->request->isPost && $model->load(Yii::$app->request->post())) {
 
             $model->user_id = Yii::$app->user->identity->id;
-            $model->first_name = $_POST['ResumeData']['first_name'];
-            $model->middle_name = $_POST['ResumeData']['middle_name'];
-            $model->last_name = $_POST['ResumeData']['last_name'];
-            $model->contact_info = json_encode($contact_info);
-            $model->location_info = json_encode($location_info);
-            $model->social_media_info = $_POST['ResumeData']['linkdin'];
-            $model->education_info = json_encode($_POST['ResumeData']['education_info']);
-            $model->skills_info = json_encode($_POST['ResumeData']['skills_info']);
-            $model->experience_info = json_encode($_POST['ResumeData']['experience_info']);
+
+            $model->contact_info = [
+                'email' => $model->email,
+                'mobile_number' => $model->mobile_number
+            ];
+            // echo '<pre>'; print_r($_POST);exit();
+            $model->location_info = [
+                'state' => $_POST['ResumeData']['state'],
+                'city' => $model->city ?? null,
+                'pincode' => $model->pincode ?? null,
+            ];
+
+
+            $model->social_media_info = $model->linkdin ?? '';
+            $model->education_info = $model->education_info;
+            $model->skills_info = $model->skills_info;
+            $model->experience_info = $model->experience_info;
 
             $model->file = UploadedFile::getInstance($model, 'file');
+
             if ($model->file) {
                 $filePath = 'uploads/' . $model->file->baseName . '.' . $model->file->extension;
 
                 if ($model->file->saveAs($filePath)) {
+                    // Save the file path in the database
                     $model->file = $filePath;
-                    Yii::$app->session->setFlash('success', 'File has been uploaded successfully.');
                 } else {
-                    Yii::$app->session->setFlash('error', 'Failed to upload file.');
-                    return $this->redirect(['resume/index']);
+                    Yii::$app->session->setFlash('error', 'File upload failed.');
+                    return $this->render('create', ['model' => $model]);
                 }
-            } else {
-                $model->file = null;
             }
-
-            if ($model->save(false)) {
+            if ($model->save()) {
                 Yii::$app->session->setFlash('success', 'Success!');
                 return $this->redirect(['resume/manage-resume']);
             } else {
@@ -87,6 +77,69 @@ class ResumeController extends \yii\web\Controller
         ]);
     }
 
+    public function actionUpdate($id)
+    {
+        $model = ResumeData::findOne($id);
+        $getState = $this->getState();
+        $model->user_id = Yii::$app->user->identity->id;
+        // Extract email and mobile number from contact_info
+        if (!empty($model->contact_info)) {
+            $contactInfo = $model->contact_info;
+            $model->email = $contactInfo['email'] ?? null;
+            $model->mobile_number = $contactInfo['mobile_number'] ?? null;
+        }
+        if (!empty($model->location_info)) {
+            $locationInfo = $model->location_info;
+            $model->state = $locationInfo['state'] ?? null;
+            $model->city = $locationInfo['city'] ?? null;
+            $model->pincode = $locationInfo['pincode'] ?? null;
+        }
+
+        if (Yii::$app->request->isPost && $model->load(Yii::$app->request->post())) {
+            $model->contact_info = [
+                'email' => $model->email,
+                'mobile_number' => $model->mobile_number
+            ];
+            
+            $model->location_info = [
+                'state' => $_POST['ResumeData']['state'],
+                'city' => $model->city,
+                'pincode' => $model->pincode,
+            ];
+
+            $model->social_media_info = $model->linkdin ?? '';
+            $model->education_info = $model->education_info;
+            $model->skills_info = $model->skills_info;
+            $model->experience_info = $model->experience_info;
+
+            $model->file = UploadedFile::getInstance($model, 'file');
+
+            if ($model->file) {
+                $filePath = 'uploads/' . $model->file->baseName . '.' . $model->file->extension;
+
+                if ($model->file->saveAs($filePath)) {
+                    // Save the file path in the database
+                    $model->file = $filePath;
+                } else {
+                    Yii::$app->session->setFlash('error', 'File upload failed.');
+                    return $this->render('create', ['model' => $model]);
+                }
+            }
+            
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Resume updated successfully!');
+                return $this->redirect(['resume/manage-resume']);
+            } else {
+                Yii::$app->session->setFlash('error', 'Failed to update resume!');
+            }
+        }
+
+        return $this->render('index', [
+            'model' => $model,
+            'getState' => $getState,
+            'skills' => $this->getSkills(),
+        ]);
+    }
 
     public function actionGetCity()
     {
@@ -127,8 +180,10 @@ class ResumeController extends \yii\web\Controller
     public function actionDownload($id)
     {
         $data = ResumeData::findOne($id);
+        $state = $this->getState()[$data->location_info['state']];
         $html = $this->renderPartial('resume-pdf', [
             'data' => $data,
+            'state' => $state
         ]);
         $mpdf = new \Mpdf\Mpdf();
         $mpdf->WriteHTML($html);

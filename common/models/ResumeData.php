@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "resume_data".
@@ -28,7 +29,15 @@ class ResumeData extends \yii\db\ActiveRecord
     public $city;
     public $pincode;
     public $linkdin;
-    public $file;
+
+    public function behaviors()
+    {
+        return [
+            TimestampBehavior::class,
+        ];
+    }
+
+
     /**
      * {@inheritdoc}
      */
@@ -43,8 +52,8 @@ class ResumeData extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'first_name', 'last_name', 'contact_info', 'location_info', 'social_media_info', 'education_info', 'skills_info', 'experience_info', 'created_at', 'updated_at', 'state', 'city', 'email', 'mobile_number', 'pincode', 'college', 'percentage'], 'required'],
-            ['Email', 'email'],
+            [['user_id', 'first_name', 'last_name', 'contact_info', 'location_info', 'education_info', 'skills_info', 'experience_info', 'state', 'city', 'email', 'mobile_number', 'pincode'], 'required'],
+            ['email', 'email'],
             [['contact_info', 'location_info', 'social_media_info', 'education_info', 'skills_info', 'experience_info', 'created_at', 'updated_at'], 'safe'],
             [['first_name', 'middle_name', 'last_name'], 'string', 'max' => 255],
             [['file'], 'file', 'skipOnEmpty' => false, 'extensions' => 'png, jpg'],

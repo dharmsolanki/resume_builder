@@ -1,8 +1,10 @@
 <?php
 
+use yidas\yii\fontawesome\FontawesomeAsset;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
+FontawesomeAsset::register($this);
 
 ?>
 <?= GridView::widget([
@@ -16,14 +18,14 @@ use yii\helpers\Url;
             'template' => '{update} {delete} {download}', // Custom template to include the download button
             'buttons' => [
                 'update' => function ($url, $model, $key) {
-                    return Html::a('Edit', $url, [
+                    return Html::a('<i class="fas fa-edit"></i>', $url, [
                         'title' => 'Edit',
                         'class' => 'btn btn-primary btn-sm', // Custom classes for the Edit button
                         'data-method' => 'post'
                     ]);
                 },
                 'delete' => function ($url, $model, $key) {
-                    return Html::a('Delete', $url, [
+                    return Html::a('<i class="fas fa-trash"></i>', $url, [
                         'title' => 'Delete',
                         'class' => 'btn btn-danger btn-sm', // Custom classes for the Delete button
                         'data-confirm' => 'Are you sure you want to delete this item?',
@@ -31,9 +33,10 @@ use yii\helpers\Url;
                     ]);
                 },
                 'download' => function ($url, $model, $key) {
-                    return Html::a('Download', Url::to(['resume/download', 'id' => $model->id]), [
-                        'title' => 'Download',
+                    return Html::a('<i class="fas fa-print"></i>', Url::to(['resume/download', 'id' => $model->id]), [
+                        'title' => 'Print',
                         'class' => 'btn btn-success btn-sm', // Add your desired classes here
+                        'target' => '_blank'
                     ]);
                 },
             ],
