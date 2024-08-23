@@ -177,7 +177,7 @@ class ResumeController extends \yii\web\Controller
         ]);
     }
 
-    public function actionDownload($id)
+    public function actionDownload($id,$action)
     {
         $data = ResumeData::findOne($id);
         $state = $this->getState()[$data->location_info['state']];
@@ -187,7 +187,7 @@ class ResumeController extends \yii\web\Controller
         ]);
         $mpdf = new \Mpdf\Mpdf();
         $mpdf->WriteHTML($html);
-        $mpdf->Output('Resume.pdf', \Mpdf\Output\Destination::INLINE);
+        $mpdf->Output('Resume.pdf', $action === 'print' ? \Mpdf\Output\Destination::INLINE : \Mpdf\Output\Destination::DOWNLOAD);
     }
 
     private function getState()

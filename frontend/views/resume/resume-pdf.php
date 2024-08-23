@@ -60,7 +60,7 @@ FontawesomeAsset::register($this);
                 <div class="experience-item" style="margin-bottom: 15px; border-left: 4px solid #007BFF; padding-left: 10px;">
                     <h3 style="margin: 0; font-size: 18px; color: #333;"><?= ucfirst($experience['company']) ?></h3>
                     <p style="margin: 3px 0; font-size: 14px; color: #555;">
-                        <?= $experience['year_of_experience'] . ($experience['year_of_experience'] > 1 ? " Years" : " Year") ?>
+                        <?= $experience['year_of_experience'] . ($experience['year_of_experience'] > 1 ? " Years of Experience" : " Year of Experience") ?>
                     </p>
                     <p style="font-size: 14px; color: #333;"><?= nl2br($experience['description']) ?></p>
                 </div>

@@ -4,6 +4,7 @@ use yidas\yii\fontawesome\FontawesomeAsset;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
+
 FontawesomeAsset::register($this);
 
 ?>
@@ -15,7 +16,7 @@ FontawesomeAsset::register($this);
         'last_name',
         [
             'class' => 'yii\grid\ActionColumn',
-            'template' => '{update} {delete} {download}', // Custom template to include the download button
+            'template' => '{update} {delete} {download} {print}', // Custom template to include the download button
             'buttons' => [
                 'update' => function ($url, $model, $key) {
                     return Html::a('<i class="fas fa-edit"></i>', $url, [
@@ -33,7 +34,13 @@ FontawesomeAsset::register($this);
                     ]);
                 },
                 'download' => function ($url, $model, $key) {
-                    return Html::a('<i class="fas fa-print"></i>', Url::to(['resume/download', 'id' => $model->id]), [
+                    return Html::a('<i class="fas fa-download"></i>', Url::to(['resume/download', 'id' => $model->id, 'action' => 'download']), [
+                        'title' => 'Download',
+                        'class' => 'btn btn-success btn-sm', // Add your desired classes here
+                    ]);
+                },
+                'print' => function ($url, $model, $key) {
+                    return Html::a('<i class="fas fa-print"></i>', Url::to(['resume/download', 'id' => $model->id, 'action' => 'print']), [
                         'title' => 'Print',
                         'class' => 'btn btn-success btn-sm', // Add your desired classes here
                         'target' => '_blank'
