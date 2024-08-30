@@ -22,13 +22,19 @@ class ResumeController extends \yii\web\Controller
         ]);
     }
 
+    public function actionTemplates()
+    {
+        return $this->render('pdf_templates');
+    }
+
     public function actionCreate()
     {
         $model = new ResumeData();
         $getState = $this->getState();
 
-        if (Yii::$app->request->isPost && $model->load(Yii::$app->request->post())) {
+        $model->template = $this->request->get('template');
 
+        if (Yii::$app->request->isPost && $model->load(Yii::$app->request->post())) {
             $model->user_id = Yii::$app->user->identity->id;
 
             $model->contact_info = [
@@ -47,6 +53,7 @@ class ResumeController extends \yii\web\Controller
             $model->education_info = $model->education_info;
             $model->skills_info = $model->skills_info;
             $model->experience_info = $model->experience_info;
+            $model->template = $_POST['template'];
 
             $model->file = UploadedFile::getInstance($model, 'file');
 
@@ -181,7 +188,7 @@ class ResumeController extends \yii\web\Controller
     {
         $data = ResumeData::findOne($id);
         $state = $this->getState()[$data->location_info['state']];
-        $html = $this->renderPartial('resume-pdf', [
+        $html = $this->renderPartial($data->resume_template ? 'templates/'.$data->resume_template : 'templates/resume-pdf', [
             'data' => $data,
             'state' => $state
         ]);

@@ -54,7 +54,7 @@ class ResumeData extends \yii\db\ActiveRecord
         return [
             [['user_id', 'first_name', 'last_name', 'contact_info', 'location_info', 'education_info', 'skills_info', 'experience_info', 'state', 'city', 'email', 'mobile_number', 'pincode'], 'required'],
             ['email', 'email'],
-            [['contact_info', 'location_info', 'social_media_info', 'education_info', 'skills_info', 'experience_info', 'created_at', 'updated_at'], 'safe'],
+            [['contact_info', 'location_info', 'social_media_info', 'education_info', 'skills_info', 'experience_info', 'resume_template', 'created_at', 'updated_at'], 'safe'],
             [['first_name', 'middle_name', 'last_name'], 'string', 'max' => 255],
             [['file'], 'file', 'skipOnEmpty' => false, 'extensions' => 'png, jpg'],
             [['file'], 'string', 'max' => 255],

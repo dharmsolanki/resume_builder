@@ -28,6 +28,11 @@ $form = ActiveForm::begin([
         <div class="col-md-12 mb-3">
             <h4>Personal Information</h4>
         </div>
+        <!-- <div class="col-md-4"> -->
+            
+            <?php echo $form->field($model, 'template')->hiddenInput()->label(false); ?>
+
+        <!-- </div> -->
         <div class="col-md-4">
             <?= $form->field($model, 'first_name')->textInput(['placeholder' => 'First Name']) ?>
         </div>

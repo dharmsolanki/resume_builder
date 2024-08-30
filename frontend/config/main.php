@@ -17,7 +17,8 @@ return [
         ],
         'user' => [
             'identityClass' => 'common\models\User',
-            'enableAutoLogin' => true,
+            'enableAutoLogin' => false,
+            'authTimeout' => 1800, // user logout after 30 min
             'identityCookie' => ['name' => '_identity-frontend', 'httpOnly' => true],
         ],
         'session' => [
@@ -42,6 +43,7 @@ return [
             'showScriptName' => false,
             'rules' => [
                 'login' => '/site/login',
+                'templates' => '/resume/templates',
                 'signup' => '/site/signup',
                 'create' => '/resume/create',
                 'manage-resume' => '/resume/manage-resume'

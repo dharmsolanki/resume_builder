@@ -23,7 +23,7 @@ $this->title = 'Resume Builder';
 
                 <p>Get started by creating a new resume. Choose from various templates, add your personal information, and create a professional-looking resume in minutes.</p>
 
-                <p><a class="btn btn-outline-secondary" href=<?= Yii::$app->user->isGuest ? Url::to("login") : Url::to("create") ?> >Create Now &raquo;</a></p>
+                <p><a class="btn btn-outline-secondary" href=<?= Yii::$app->user->isGuest ? Url::to("login") : Url::to("templates") ?> >Create Now &raquo;</a></p>
             </div>
             <div class="col-lg-6">
                 <h2>Manage Resumes</h2>
