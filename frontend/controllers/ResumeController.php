@@ -22,17 +22,11 @@ class ResumeController extends \yii\web\Controller
         ]);
     }
 
-    public function actionTemplates()
-    {
-        return $this->render('pdf_templates');
-    }
-
     public function actionCreate()
     {
         $model = new ResumeData();
         $getState = $this->getState();
-
-        $model->template = $this->request->get('template');
+        $model->template = $this->request->get() ? $this->request->get('template') : "default";
 
         if (Yii::$app->request->isPost && $model->load(Yii::$app->request->post())) {
             $model->user_id = Yii::$app->user->identity->id;
@@ -53,7 +47,7 @@ class ResumeController extends \yii\web\Controller
             $model->education_info = $model->education_info;
             $model->skills_info = $model->skills_info;
             $model->experience_info = $model->experience_info;
-            $model->template = $_POST['template'];
+            // $model->template = $_POST['template'];
 
             $model->file = UploadedFile::getInstance($model, 'file');
 
@@ -107,7 +101,7 @@ class ResumeController extends \yii\web\Controller
                 'email' => $model->email,
                 'mobile_number' => $model->mobile_number
             ];
-            
+
             $model->location_info = [
                 'state' => $_POST['ResumeData']['state'],
                 'city' => $model->city,
@@ -184,11 +178,11 @@ class ResumeController extends \yii\web\Controller
         ]);
     }
 
-    public function actionDownload($id,$action)
+    public function actionDownload($id, $action)
     {
         $data = ResumeData::findOne($id);
         $state = $this->getState()[$data->location_info['state']];
-        $html = $this->renderPartial($data->resume_template ? 'templates/'.$data->resume_template : 'templates/resume-pdf', [
+        $html = $this->renderPartial($data->template ? 'templates/' . $data->template : 'templates/default', [
             'data' => $data,
             'state' => $state
         ]);
@@ -965,5 +959,10 @@ class ResumeController extends \yii\web\Controller
             'bootstrap' => 'bootstrap',
             'docker' => 'docker'
         ];
+    }
+
+    public function actionTemplates()
+    {
+        return $this->render('pdf_templates');
     }
 }
